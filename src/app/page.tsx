@@ -23,9 +23,6 @@ export default async function Home() {
     "weather": data.weather[0].description,
     "temp": data.main.temp
   }
-  
-  console.log(forecast.location);
-  
 
   return (
     <main>
