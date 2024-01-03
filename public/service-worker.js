@@ -11,6 +11,11 @@ const deleteOldCaches = async () => {
   })
 }
 
+const addResourcesToCache = async (resources) => {
+  const cache = await caches.open(CACHE_VERSION)
+  await cache.addAll(resources)
+};
+
 const putInCache = async (request, response) => {
   const cache = await caches.open(CACHE_VERSION)
   await cache.put(request, response);
@@ -53,6 +58,11 @@ const networkFirst = async (request) => {
 
 self.addEventListener('install', event => {
   console.log('Service worker installed')
+  event.waitUntil(
+    addResourcesToCache([
+      "/",
+    ]),
+  );
 })
 
 self.addEventListener('activate', event => {
