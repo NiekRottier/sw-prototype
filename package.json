@@ -3,15 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_OPTIONS='--inspect' next dev --experimental-https",
-    "build": "next build",
+    "dev": "cross-env NODE_OPTIONS='--inspect' next dev --experimental-https && workbox injectManifest workbox-config.js",
+    "build": "next build && workbox injectManifest workbox-config.js",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "next": "14.0.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "workbox-window": "^7.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
