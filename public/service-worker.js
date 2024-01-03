@@ -1,13 +1,18 @@
-self.addEventListener('install', event => {
-  console.log('Service worker installed')
-})
+// Update version number when updating the service worker
+const CACHE_VERSION = 'v2'
+const SUPPORTED_CACHES = [CACHE_VERSION]
 
-self.addEventListener('activate', event => {
-  console.log('Service worker activated')
-})
+const deleteOldCaches = async () => {
+  const keyList = await caches.keys()
+  const cachesToDelete = keyList.filter((key) => !SUPPORTED_CACHES.includes(key));
+  cachesToDelete.forEach(cache => {
+    console.log('Deleting cache:', cache)
+    caches.delete(cache)
+  })
+}
 
 const putInCache = async (request, response) => {
-  const cache = await caches.open('vanilla-sw-cache-v1');
+  const cache = await caches.open(CACHE_VERSION)
   await cache.put(request, response);
 }
 
@@ -18,11 +23,20 @@ const cacheFirst = async (request) => {
     return responseFromCache
   }
 
-  console.log('Fetching ', request.url);
+  console.log('Fetching ', request.url)
   const responseFromNetwork = await fetch(request)
-  putInCache(request, responseFromNetwork)
+  putInCache(request, responseFromNetwork.clone())
   return responseFromNetwork
 }
+
+self.addEventListener('install', event => {
+  console.log('Service worker installed')
+})
+
+self.addEventListener('activate', event => {
+  console.log('Service worker activated')
+  deleteOldCaches()
+})
 
 self.addEventListener('fetch', event => {
   event.respondWith(cacheFirst(event.request))
