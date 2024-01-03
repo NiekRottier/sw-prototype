@@ -1,5 +1,15 @@
 import type { Metadata, Viewport } from 'next'
 
+import dynamic from 'next/dynamic'
+
+const RegisterSW = dynamic(
+  () => import('@/lib/RegisterSW').then((mod) => mod.default),
+  {
+    ssr: false,
+    loading: () => null,
+  },
+);
+
 export const metadata: Metadata = {
   title: 'Service Worker prototype',
   description: 'Klaar om keuzes te maken',
@@ -19,7 +29,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <RegisterSW />
+      </body>
     </html>
   )
 }
