@@ -5,7 +5,6 @@ export default function RegisterSW() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker
       .register('/service-worker.js')
-      .then((registration) => console.log('Service worker scope is:', registration.scope))
       .catch((error) => console.log('Service worker registration failed:', error))
   }
   
