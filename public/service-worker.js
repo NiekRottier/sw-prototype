@@ -23,10 +23,32 @@ const cacheFirst = async (request) => {
     return responseFromCache
   }
 
-  console.log('Fetching ', request.url)
+  console.log('Fetching:', request.url)
   const responseFromNetwork = await fetch(request)
   putInCache(request, responseFromNetwork.clone())
   return responseFromNetwork
+}
+
+const networkFirst = async (request) => {
+  try {
+    console.log('Fetching:', request.url)
+    const responseFromNetwork = await fetch(request)
+    putInCache(request, responseFromNetwork.clone())
+    return responseFromNetwork
+  } catch (error) {
+    console.warn('Failed to fetch, reverting to cache')
+    const responseFromCache = await caches.match(request)
+    if (responseFromCache) {
+      console.log('Response from cache')
+      return responseFromCache
+    } else {
+      console.error('No network or cache detected')
+      return new Response("No network or cache detected", {
+        status: 408,
+        headers: { "Content-Type": "text/plain" },
+      });
+    }
+  }
 }
 
 self.addEventListener('install', event => {
@@ -39,5 +61,5 @@ self.addEventListener('activate', event => {
 })
 
 self.addEventListener('fetch', event => {
-  event.respondWith(cacheFirst(event.request))
+  event.respondWith(networkFirst(event.request))
 })
