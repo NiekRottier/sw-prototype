@@ -1,6 +1,12 @@
 // Update version number when updating the service worker
-const CACHE_VERSION = 'v2'
+const CACHE_VERSION = 'v1'
 const SUPPORTED_CACHES = [CACHE_VERSION]
+const precacheURLs = [
+  '/',
+  '/next-page',
+  '/next-page/deeper-page',
+  '/manifest.webmanifest'
+]
 
 const deleteOldCaches = async () => {
   const keyList = await caches.keys()
@@ -59,9 +65,7 @@ const networkFirst = async (request) => {
 self.addEventListener('install', event => {
   console.log('Service worker installed')
   event.waitUntil(
-    addResourcesToCache([
-      "/",
-    ]),
+    addResourcesToCache(precacheURLs),
   );
 })
 
