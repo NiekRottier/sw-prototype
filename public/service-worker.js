@@ -1,14 +1,26 @@
-self.addEventListener('install', event => {
-  console.log('Service worker installed')
-  
-})
+import {setDefaultHandler} from 'workbox-routing';
+import {NetworkFirst} from 'workbox-strategies';
 
-self.addEventListener('activate', event => {
-  console.log('Service worker activated')
-})
+const cacheName = 'install-cache'
+const precacheURLs = [
+  '/',
+  '/new-page',
+  '/new-page/deeper-page',
+  '/manifest.webmanifest'
+]
 
-self.addEventListener('fetch', event => {
-  console.log('Fetched:', event.request.url);
-  console.log(event);
-})
+// On install precache the defined URLs
+self.addEventListener('install', (event) => {
+  const populateCache = async () => {
+    const cache = await caches.open(cacheName);
+    await cache.addAll(precacheURLs);
+  };
 
+  event.waitUntil(populateCache());
+});
+
+// For all routes use NetworkFirst strategy
+// Write to the same cache to  overwrite the precached routes
+setDefaultHandler(
+  new NetworkFirst({cacheName})
+)
