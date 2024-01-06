@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 async function getWeather<T>(lat: string, lon: string): Promise<T> {
   const API_KEY = process.env.API_KEY
   
@@ -11,7 +13,7 @@ async function getWeather<T>(lat: string, lon: string): Promise<T> {
 
 export default async function Home() {  
   
-  let data: any = await getWeather("51.559757", "5.088038")
+  let data: any = await getWeather("51.559757", (Math.random()*30).toString())
   
   type forecast = {
     "location": string,
@@ -27,6 +29,7 @@ export default async function Home() {
   return (
     <main>
       <p>Het weer in <i>{forecast.location}</i> is <i>{forecast.temp}</i> &#176;C met <i>{forecast.weather}</i></p>
+      <Link href="/next-page">Next page</Link>
     </main>
   )
 }
